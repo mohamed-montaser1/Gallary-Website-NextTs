@@ -17,18 +17,6 @@ const index: FC<Props> = ({}) => {
           image="/myImage.jpg"
           likes_count={15}
         />
-        <Card
-          title="This Is My Awesome Image BY AI"
-          description="This Is Short Description"
-          image="/myImage.jpg"
-          likes_count={15}
-        />
-        <Card
-          title="This Is My Awesome Image BY AI"
-          description="This Is Short Description"
-          image="/myImage.jpg"
-          likes_count={15}
-        />
       </div>
       <button className={`btn-primary ${styles.seeMore}`}>
         See More Photos
