@@ -1,0 +1,85 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* Globals */
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+@mixin btn {
+  padding: 10px 24px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+}
+
+.btn-primary {
+  @include btn();
+  background-color: #17e381;
+  color: #ffffff;
+}
+
+.btn-danger {
+  @include btn();
+  background-color: #e8261f;
+  color: white;
+}
+
+.text-big {
+  font-size: 40px;
+}
+
+.text-mid {
+  font-size: 32px;
+}
+
+.text-small {
+  font-size: 24px;
+}
+
+.text-vs {
+  font-size: 16px;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.normal {
+  font-weight: 400;
+}

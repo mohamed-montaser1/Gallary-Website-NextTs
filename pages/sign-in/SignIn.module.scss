@@ -1,0 +1,20 @@
+.h1 {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+.form {
+  margin: 0 auto;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  .signUp {
+    color: #7f9389;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 16px;
+  }
+}

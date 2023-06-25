@@ -1,0 +1,45 @@
+.inputContainer {
+  width: 581px;
+  max-width: 90%;
+  position: relative;
+  input {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #17e381;
+    border-radius: 8px;
+    padding-inline: 28px 89px;
+    font-size: 24px;
+    font-weight: normal;
+    color: #6c7771;
+    &::placeholder {
+      color: #6c7771;
+    }
+    outline: none;
+    transition: all 300ms linear;
+  }
+  button.showHidden {
+    position: absolute;
+    right: 20px;
+    top: 30px;
+    transform: translateY(-50%);
+  }
+  small {
+    position: absolute;
+    top: -8px;
+    z-index: 1000;
+    background-color: white;
+    padding-inline: 5px;
+    color: #17e381;
+    left: 10px;
+    transition: all 300ms linear;
+    font-weight: bold;
+    user-select: none;
+  }
+  .error {
+    color: rgb(232, 38, 31);
+    margin-top: 4px;
+    font-weight: 600;
+    transition: all 300ms linear;
+    height: 19px;
+  }
+}
