@@ -17,9 +17,11 @@ interface registerResult {
   errorMessage?: string;
 }
 
-interface loginResult {
+export interface loginResult {
   success: boolean;
   token: string;
+  error: boolean;
+  errorMessage: string;
 }
 
 export default function Page() {
@@ -95,7 +97,7 @@ export default function Page() {
       return;
     }
     setErr_msg("");
-    let authentication = new Auth(name, email, password);
+    let authentication = new Auth(email, password, name);
     let register: registerResult = await authentication.register();
     let login: loginResult = await authentication.login();
     useStorage.setItem("token", login.token);
@@ -116,7 +118,7 @@ export default function Page() {
       useStorage.setItem("IsCreatedAccount", "true");
       setTimeout(() => {
         router.push("/verify-email");
-      }, 600);
+      }, 100);
     });
   };
 

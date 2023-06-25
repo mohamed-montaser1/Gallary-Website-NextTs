@@ -114,7 +114,6 @@ const Input: FC<Props> = ({
           type={type}
           placeholder={placeholder}
           autoComplete={"off"}
-          autoFocus
           name={`${type} input type`}
           maxLength={maxLength}
           onBlur={validation}

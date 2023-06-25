@@ -4,9 +4,9 @@ import useFetch from "@/hooks/useFetch";
 
 class Auth {
   constructor(
-    public name: string,
     public email: string,
-    public password: string
+    public password: string,
+    public name?: string
   ) {}
   async register() {
     let route = `auth/register`;

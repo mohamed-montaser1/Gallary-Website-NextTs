@@ -41,13 +41,12 @@ export default function Page() {
       return;
     }
     if (+code === +inputValue) {
-      console.log(true);
       setErr_msg("");
       setSuccess_msg("Code Is Right !");
       setTimeout(() => {
         useStorage.setItem("IsCreatedAccount", "false");
         useStorage.setItem("isLoggedIn", "true");
-        router.back();
+        router.push("/?refresh=true");
       }, 1000);
       return;
     }

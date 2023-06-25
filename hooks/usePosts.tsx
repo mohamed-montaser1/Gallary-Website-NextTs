@@ -3,10 +3,14 @@ import useFetch from "./useFetch";
 
 export default class usePosts {
   public posts: Array<PostType> = [];
-  constructor() {
-    this.getAllPosts();
-  }
-  async getAllPosts() {
-    let res = await useFetch.get("");
+  constructor() {}
+  async getAllPosts(): Promise<Array<PostType>> {
+    type dataType = {
+      success: boolean;
+      posts: Array<PostType>;
+    };
+    let data = await useFetch.get<dataType>("post/all");
+    this.posts = data.posts;
+    return data.posts;
   }
 }
