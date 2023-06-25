@@ -41,8 +41,10 @@ export default function Page() {
   let [name, setName] = useState("");
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let [re_password, setRe_password] = useState("");
   let [err_msg, setErr_msg] = useState("");
   let [success_msg, setSuccess_msg] = useState("");
+
   let { token, setToken } = useLogin();
 
   const handleSignUp = async () => {
@@ -88,6 +90,13 @@ export default function Page() {
     }
     if (password.trim() === "") {
       let error = new ValidationError("Please Fill out The Password Input");
+      setErr_msg(error.message);
+      return;
+    }
+    if (password.trim() !== re_password.trim()) {
+      let error = new ValidationError(
+        "The Password Is Not Match The Re password"
+      );
       setErr_msg(error.message);
       return;
     }
@@ -154,11 +163,18 @@ export default function Page() {
           setState={setEmail}
         />
         <Input
-          placeholder="Your Password..."
+          placeholder="Password"
           small="Password"
           type="password"
           state={password}
           setState={setPassword}
+        />
+        <Input
+          placeholder="Re Enter Password"
+          small="Password"
+          type="password"
+          state={re_password}
+          setState={setRe_password}
         />
         <button className="btn-primary" onClick={handleSignUp}>
           Sign Up
