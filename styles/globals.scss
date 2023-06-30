@@ -52,6 +52,20 @@ h6 {
   @include btn();
   background-color: #17e381;
   color: #ffffff;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    background-color: darken(#17e381, 10%);
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 10000;
+    width: 10px;
+    border-radius: 8px 0 0 8px;
+    transition: width 300ms linear;
+    opacity: 0.5;
+  }
 }
 
 .btn-danger {
@@ -82,4 +96,17 @@ h6 {
 
 .normal {
   font-weight: 400;
+}
+
+.container {
+  margin-top: 110px;
+  width: calc(100% - 194px);
+  margin-left: auto;
+  margin-bottom: 50px;
+  &.notLoggedIn {
+    width: 100%;
+  }
+  @media (max-width: 560px) {
+    width: calc(100% - 50px);
+  }
 }

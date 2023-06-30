@@ -14,7 +14,6 @@ interface userSchemaType {
   email: string;
   password: string;
   posts: postsType;
-  liked_posts: postsType;
 }
 
 const UserSchema = new Schema<userSchemaType>(
@@ -23,15 +22,6 @@ const UserSchema = new Schema<userSchemaType>(
     email: String,
     password: String,
     posts: {
-      type: [
-        {
-          type: Types.ObjectId,
-          ref: "Post",
-        },
-      ],
-      default: [],
-    },
-    liked_posts: {
       type: [
         {
           type: Types.ObjectId,

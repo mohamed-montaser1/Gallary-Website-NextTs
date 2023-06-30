@@ -1,5 +1,10 @@
 import { connect } from "mongoose";
+let { DB_URL } = process.env;
+
+if (!DB_URL) {
+  throw new Error("You Must add Db Url to .env file");
+}
 
 export default function dbConnect(): Promise<any> {
-  return connect(process.env.DB_URL!, { dbName: "Gallary-DB" });
+  return connect(DB_URL!);
 }

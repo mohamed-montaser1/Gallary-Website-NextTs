@@ -8,22 +8,15 @@ import useStorage from "@/hooks/useStorage";
 import ValidationError from "@/lib/ValidationError";
 import { loginResult } from "../sign-up";
 import Auth from "@/Services/authenticationServices";
+import useLogin from "@/hooks/useLogin";
 
-export default function Page() {
+export default function Page({ isLoggedIn }: { isLoggedIn: boolean }) {
   let router = useRouter();
-  let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   let [email, setEmail] = useState<string>("");
   let [password, setPassword] = useState<string>("");
   let [err_msg, setErr_msg] = useState<string>("");
   let [success_msg, setSuccess_msg] = useState<string>("");
 
-  useEffect(() => {
-    if (process.browser) {
-      useStorage.getItem("isLoggedIn")?.startsWith("true")
-        ? setIsLoggedIn(true)
-        : setIsLoggedIn(false);
-    }
-  }, []);
   if (isLoggedIn) {
     router.push("/");
   }
@@ -66,10 +59,10 @@ export default function Page() {
     }
     setSuccess_msg(`Login Successfully`);
     useStorage.setItem("isLoggedIn", "true");
-    useStorage.setItem("IsCreatedAccount", "true");
+    useStorage.setItem("IsCreatedAccount", "false");
     useStorage.setItem("token", login.token);
     setTimeout(() => {
-      router.push("/?refresh=true");
+      window.location.reload();
     }, 200);
   };
   return (
@@ -77,6 +70,31 @@ export default function Page() {
       <Head>
         <title>Sign In</title>
       </Head>
+      <div className={`${styles.container} container notLoggedIn`}>
+        <h1 className={styles.h1}>Sign In</h1>
+        <div className={styles.form}>
+          <Input
+            placeholder="Your Email..."
+            small="Email"
+            type="text"
+            state={email}
+            setState={setEmail}
+          />
+          <Input
+            placeholder="Your Password..."
+            small="Password"
+            type="password"
+            state={password}
+            setState={setPassword}
+          />
+          <button className="btn-primary" onClick={signInHandler}>
+            Sign In
+          </button>
+          <Link href={"/sign-up"} className={styles.signUp}>
+            Don’t Have An Email? Sign Up
+          </Link>
+        </div>
+      </div>
       <h2 className={`${styles.alert} ${err_msg ? styles.activeAlert : ""}`}>
         {err_msg}
       </h2>
@@ -87,29 +105,6 @@ export default function Page() {
       >
         {success_msg}
       </h2>
-      <h1 className={styles.h1}>Sign In</h1>
-      <div className={styles.form}>
-        <Input
-          placeholder="Your Email..."
-          small="Email"
-          type="text"
-          state={email}
-          setState={setEmail}
-        />
-        <Input
-          placeholder="Your Password..."
-          small="Password"
-          type="password"
-          state={password}
-          setState={setPassword}
-        />
-        <button className="btn-primary" onClick={signInHandler}>
-          Sign In
-        </button>
-        <Link href={"/sign-up"} className={styles.signUp}>
-          Don’t Have An Email? Sign Up
-        </Link>
-      </div>
     </>
   );
 }

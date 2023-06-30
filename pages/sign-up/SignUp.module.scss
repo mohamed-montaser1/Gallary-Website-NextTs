@@ -1,49 +1,8 @@
-.h1 {
-  font-size: 40px;
-  text-align: center;
-  margin-bottom: 45px;
-}
+@import "../sign-in/SignIn.module.scss";
 
-@mixin popup {
-  position: absolute;
+.signIn {
+  color: #7f9389;
   font-size: 16px;
-  right: -100%;
-  top: calc(100vh - 100px);
-  background-color: #4e5e55;
-  padding: 20px;
-  border-radius: 16px;
-  transition: right 300ms linear;
-  z-index: 1000000000000000000000000000000000000000;
-  user-select: none;
-}
-
-.alert {
-  color: #e8261f;
-  @include popup();
-  &.activeAlert {
-    right: 20px;
-  }
-}
-
-.success {
-  color: #17e381;
-  @include popup();
-  &.activeSuccess {
-    right: 20px;
-  }
-}
-
-.form {
-  margin: 0 auto;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  .signIn {
-    color: #7f9389;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 16px;
-  }
+  font-weight: 600;
+  margin-top: 16px;
 }

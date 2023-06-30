@@ -1,14 +1,15 @@
-"use client";
-
 import React from "react";
 import styles from "./VerifyEmail.module.scss";
 import Input from "@/Components/Input";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import useStorage from "@/hooks/useStorage";
-export default function Page() {
+interface Props {
+  isLoggedIn: boolean;
+}
+export default function Page({ isLoggedIn }: Props) {
   let IsCreatedAccount = useStorage.getItem("IsCreatedAccount");
   let router = useRouter();
   if (process.browser) {
@@ -46,7 +47,8 @@ export default function Page() {
       setTimeout(() => {
         useStorage.setItem("IsCreatedAccount", "false");
         useStorage.setItem("isLoggedIn", "true");
-        router.push("/?refresh=true");
+        // router.push("?refresh=true");
+        window.location.reload();
       }, 1000);
       return;
     }
@@ -66,24 +68,30 @@ export default function Page() {
       >
         {success_msg}
       </h2>
-      <h1 className={styles.h1}>Verify Email</h1>
-      <div className={styles.container}>
-        <p className={styles.p}>Checkout Your Email !</p>
-        <Input
-          placeholder="Enter Code Here..."
-          small="Code"
-          type="text"
-          maxLength={5}
-          state={inputValue}
-          setState={setInputValue}
-        />
-        <div className={styles.btnContainer}>
-          <Link href={"/sign-up"} className="btn-danger">
-            Change Your Info
-          </Link>
-          <button className="btn-primary" onClick={verifyCodeHandler}>
-            Verify Email
-          </button>
+      <div
+        className={`${styles.mainContainer} ${
+          !isLoggedIn && styles.notLoggedIn
+        }`}
+      >
+        <h1 className={styles.h1}>Verify Email</h1>
+        <div className={styles.container}>
+          <p className={styles.p}>Checkout Your Email !</p>
+          <Input
+            placeholder="Enter Code Here..."
+            small="Code"
+            type="text"
+            maxLength={5}
+            state={inputValue}
+            setState={setInputValue}
+          />
+          <div className={styles.btnContainer}>
+            <Link href={"/sign-up"} className="btn-danger">
+              Change Your Info
+            </Link>
+            <button className="btn-primary" onClick={verifyCodeHandler}>
+              Verify Email
+            </button>
+          </div>
         </div>
       </div>
     </>

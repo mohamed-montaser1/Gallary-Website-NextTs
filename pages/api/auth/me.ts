@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { Request, Response } from "express";
 import Auth from "@/controllers/auth";
 import dbConnect from "@/helpers/dbConnect";
 

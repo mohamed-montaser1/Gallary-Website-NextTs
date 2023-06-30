@@ -1,5 +1,3 @@
-"use client";
-
 import React, { FC, FocusEvent, useRef } from "react";
 import styles from "./Input.module.scss";
 import ValidationError from "@/lib/ValidationError";
@@ -13,6 +11,7 @@ interface Props {
   state?: string;
   setState?: React.Dispatch<React.SetStateAction<string>>;
   maxLength?: number;
+  role?: "input" | "textarea";
 }
 
 type validationFunction = (e: FocusEvent<HTMLInputElement>) => void;
@@ -25,6 +24,7 @@ const Input: FC<Props> = ({
   state,
   setState,
   maxLength,
+  role = "input",
 }) => {
   let errorPRef = useRef<HTMLParagraphElement>(null);
   let smallRef = useRef<HTMLElement>(null);
@@ -109,17 +109,28 @@ const Input: FC<Props> = ({
         <small className={styles.small} ref={smallRef}>
           {small}
         </small>
-        <input
-          className={styles.input}
-          type={type}
-          placeholder={placeholder}
-          autoComplete={"off"}
-          name={`${type} input type`}
-          maxLength={maxLength}
-          onBlur={validation}
-          ref={inputRef}
-          onChange={(e) => (setState ? setState(e.target.value) : "")}
-        />
+        {role == "input" && (
+          <input
+            className={styles.input}
+            type={type}
+            placeholder={placeholder}
+            autoComplete={"off"}
+            name={`${type} input type`}
+            maxLength={maxLength}
+            onBlur={validation}
+            ref={inputRef}
+            onChange={(e) => (setState ? setState(e.target.value) : "")}
+            value={state}
+          />
+        )}
+        {role === "textarea" && (
+          <textarea
+            placeholder={placeholder}
+            className={styles.textarea}
+            value={state}
+            onChange={(e) => (setState ? setState(e.target.value) : "")}
+          ></textarea>
+        )}
         {type === "password" && (
           <button
             className={`btn-primary ${styles.showHidden}`}

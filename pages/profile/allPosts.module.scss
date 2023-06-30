@@ -1,0 +1,18 @@
+.container {
+  .h1 {
+    text-align: center;
+    margin-bottom: 79px;
+  }
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    margin-inline: auto;
+    margin-bottom: 21px;
+    gap: 32px;
+    @media (max-width: 328px) {
+      width: 100%;
+      padding-inline: 16px;
+    }
+  }
+}

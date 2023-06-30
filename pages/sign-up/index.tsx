@@ -106,6 +106,11 @@ export default function Page() {
       return;
     }
     setErr_msg("");
+
+    setSuccess_msg("Loading...");
+    setTimeout(() => {
+      setSuccess_msg("");
+    }, 400);
     let authentication = new Auth(email, password, name);
     let register: registerResult = await authentication.register();
     let login: loginResult = await authentication.login();
@@ -146,42 +151,44 @@ export default function Page() {
       >
         {success_msg}
       </h2>
-      <h1 className={styles.h1}>Sign Up</h1>
-      <div className={styles.form}>
-        <Input
-          placeholder="Your Name..."
-          small="Name"
-          type="text"
-          state={name}
-          setState={setName}
-        />
-        <Input
-          placeholder="Your Email..."
-          small="Email"
-          type="text"
-          state={email}
-          setState={setEmail}
-        />
-        <Input
-          placeholder="Password"
-          small="Password"
-          type="password"
-          state={password}
-          setState={setPassword}
-        />
-        <Input
-          placeholder="Re Enter Password"
-          small="Password"
-          type="password"
-          state={re_password}
-          setState={setRe_password}
-        />
-        <button className="btn-primary" onClick={handleSignUp}>
-          Sign Up
-        </button>
-        <Link href={"/sign-in"} className={styles.signIn}>
-          Have Already An Email? Sign In
-        </Link>
+      <div className={`${styles.container} container notLoggedIn`}>
+        <h1 className={styles.h1}>Sign Up</h1>
+        <div className={styles.form}>
+          <Input
+            placeholder="Your Name..."
+            small="Name"
+            type="text"
+            state={name}
+            setState={setName}
+          />
+          <Input
+            placeholder="Your Email..."
+            small="Email"
+            type="text"
+            state={email}
+            setState={setEmail}
+          />
+          <Input
+            placeholder="Password"
+            small="Password"
+            type="password"
+            state={password}
+            setState={setPassword}
+          />
+          <Input
+            placeholder="Re Enter Password"
+            small="Password"
+            type="password"
+            state={re_password}
+            setState={setRe_password}
+          />
+          <button className="btn-primary" onClick={handleSignUp}>
+            Sign Up
+          </button>
+          <Link href={"/sign-in"} className={styles.signIn}>
+            Have Already An Email? Sign In
+          </Link>
+        </div>
       </div>
     </>
   );

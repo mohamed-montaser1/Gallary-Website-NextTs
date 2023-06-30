@@ -17,6 +17,22 @@
     outline: none;
     transition: all 300ms linear;
   }
+  textarea {
+    width: 100%;
+    height: 200px;
+    border: 1px solid #17e381;
+    border-radius: 8px;
+    padding: 20px 28px;
+    font-size: 24px;
+    resize: none;
+    font-weight: normal;
+    color: #6c7771;
+    &::placeholder {
+      color: #6c7771;
+    }
+    outline: none;
+    transition: all 300ms linear;
+  }
   button.showHidden {
     position: absolute;
     right: 20px;

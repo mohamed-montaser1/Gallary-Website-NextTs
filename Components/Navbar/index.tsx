@@ -1,19 +1,13 @@
-"use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import styles from "./Navbar.module.scss";
 import Link from "next/link";
-import useLogin from "@/Context/loginContext";
-import useStorage from "@/hooks/useStorage";
+import { nanoid } from "nanoid";
 
-const Navbar: FC = () => {
-  let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  useEffect(() => {
-    if (process.browser) {
-      useStorage.getItem("isLoggedIn")?.startsWith("true")
-        ? setIsLoggedIn(true)
-        : setIsLoggedIn(false);
-    }
-  }, []);
+interface Props {
+  isLoggedIn: boolean;
+}
+
+const Navbar: FC<Props> = ({ isLoggedIn }) => {
   return (
     <>
       <div className={styles.navbar}>
@@ -22,17 +16,23 @@ const Navbar: FC = () => {
         </Link>
         {isLoggedIn && (
           <div className={styles.listContainer}>
-            <Link href={"/"} className={`${styles.listItem}`}>
+            <Link href={"/"} className={`${styles.listItem}`} key={nanoid()}>
               Home
             </Link>
-            <Link href={"/profile"} className={styles.listItem}>
+            <Link
+              href={"/profile/all-photos"}
+              className={styles.listItem}
+              key={nanoid()}
+            >
               My Profile
             </Link>
           </div>
         )}
         {!isLoggedIn && (
           <Link href={"/sign-in"}>
-            <button className="btn-primary">Sign In</button>
+            <button role="button" className="btn-primary">
+              Sign In
+            </button>
           </Link>
         )}
       </div>

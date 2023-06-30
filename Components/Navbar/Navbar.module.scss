@@ -7,9 +7,13 @@
   height: 70px;
   margin-bottom: 40px;
   width: 100%;
+  position: fixed;
+  z-index: 100;
+  top: 0;
   .logo {
     color: white;
   }
+
   @media (max-width: 440px) {
     padding-inline: 16px;
   }

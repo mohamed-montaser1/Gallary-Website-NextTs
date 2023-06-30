@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import userModel, { postsType } from "../../models/user.model";
 import { compareSync, hashSync } from "bcrypt";
-import { JwtPayload, sign, verify } from "jsonwebtoken";
+import { JwtPayload, verify } from "jsonwebtoken";
+import { verifyPayload, signToken } from "@/helpers/jwtHelper";
 
 class Auth {
   static async login(req: Request, res: Response) {
@@ -35,9 +36,7 @@ class Auth {
         error: true,
       });
     }
-    let token = sign({ email, sub: user._id }, process.env.SECRET_KEY!, {
-      expiresIn: "1w",
-    });
+    let token = await signToken({ email, sub: user._id });
     return res.status(200).json({
       success: true,
       token,
@@ -99,7 +98,7 @@ class Auth {
   }
   static async me(req: Request, res: Response) {
     type payload = { email: string } | string | JwtPayload;
-    let token = req.headers["authorization"];
+    let token = req.headers["authorization"] as string;
     token = token?.replace("Bearer", "")?.trim();
     let payload = verify(token!, process.env.SECRET_KEY!)!;
     if (!payload) {
@@ -111,11 +110,56 @@ class Auth {
     }
     let user;
     if (typeof payload !== "string") {
-      user = await userModel.findById(payload.sub).select("-password -__v");
+      user = await userModel
+        .findById(payload.sub)
+        .select("-password -__v")
+        .populate("posts liked_posts");
     }
     return res.status(200).json({
       user,
     });
+  }
+  static async update(req: Request, res: Response) {
+    let token = req.headers["authorization"];
+    let changedValue = req.headers["changed-value"];
+    console.log(changedValue);
+    if (!token) {
+      return res.json({
+        success: true,
+        message: "Please Enter A Token",
+      });
+    }
+    let payload = await verifyPayload(token);
+    if (!payload) {
+      return res.json({
+        success: true,
+        message: "There Is Error In Provided Token!",
+      });
+    }
+    let user = await userModel.findById(payload.sub);
+    if (!user) {
+      return res.json({
+        success: true,
+        message: "Cannot Find User With The Provided Token",
+      });
+    }
+    try {
+      await userModel
+        .findByIdAndUpdate(payload.sub, {
+          [changedValue as string]: req.body[changedValue as string],
+        })
+        .then(() => {
+          return res.status(201).json({
+            success: true,
+            message: "Updated Successfly!",
+          });
+        });
+    } catch (error) {
+      return res.status(500).json({
+        success: true,
+        message: "There Is Error While Updating The Model In Database!",
+      });
+    }
   }
 }
 

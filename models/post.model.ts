@@ -27,6 +27,10 @@ const PostSchema = new Schema<postSchemaType>(
         ref: "User",
       },
     ],
+    author: {
+      type: Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );

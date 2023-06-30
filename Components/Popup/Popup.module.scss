@@ -1,0 +1,25 @@
+.popup__layer {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 24, 17, 0.48);
+  backdrop-filter: blur(11px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000000;
+  .popup__container {
+    max-height: 90%;
+    background-color: transparent;
+    position: relative;
+    width: 500px;
+    height: 500px;
+    img {
+      width: 500px;
+      aspect-ratio: 3/2;
+      object-fit: contain;
+      position: relative;
+    }
+  }
+}

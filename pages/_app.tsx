@@ -1,8 +1,11 @@
 import Navbar from "@/Components/Navbar";
-import useLogin from "@/Context/loginContext";
+import Sidebar from "@/Components/Sidebar";
+import useLogin from "@/hooks/useLogin";
 import "@/styles/globals.scss";
+import "@/pages/loading.scss";
 import type { AppProps } from "next/app";
 import { Montserrat } from "next/font/google";
+import { useEffect, useState } from "react";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -11,16 +14,20 @@ const montserrat = Montserrat({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  let { token } = useLogin();
-  let isLoggedIn = false;
-  if (token?.replace("Bearer", "").trim() !== "") {
-    isLoggedIn = true;
-  }
+  let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  useEffect(() => {
+    setIsLoggedIn(useLogin.getIsLoggedIn() as boolean);
+  }, []);
+
   return (
     <>
       <main className={montserrat.className}>
-        <Navbar />
-        <Component {...pageProps} />
+        <Navbar isLoggedIn={isLoggedIn} />
+        <Sidebar
+          key={(Math.random() * 1_000_000 * 20_18) & 20}
+          isLoggedIn={isLoggedIn}
+        />
+        <Component {...pageProps} isLoggedIn={isLoggedIn} />
       </main>
     </>
   );

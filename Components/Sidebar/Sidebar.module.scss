@@ -1,0 +1,48 @@
+.aside {
+  $navbar-height: 70px;
+  $white: #d9ffed;
+  width: 194px;
+  height: calc(100vh - $navbar-height);
+  position: fixed;
+  left: 0;
+  top: 70px;
+  background-color: #1e2d25;
+  padding-block: 40px;
+  @media (max-width: 560px) {
+    padding-block: 10px;
+    width: 50px;
+  }
+  .container {
+    height: 100%;
+    margin-inline: auto;
+    width: 80%;
+    @media (max-width: 560px) {
+      align-items: center;
+    }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 16px;
+      .Item__Icon {
+        color: $white;
+        width: 18.67px;
+        height: 14px;
+      }
+      .Item__Text {
+        color: $white;
+        font-size: 16px;
+        font-weight: 600;
+        @media (max-width: 560px) {
+          display: none;
+        }
+      }
+    }
+  }
+}

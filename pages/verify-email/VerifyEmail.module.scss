@@ -15,17 +15,25 @@
   z-index: 1000000000000000000000000000000000000000;
   user-select: none;
 }
-
-.container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  p {
-    margin-bottom: 30px;
+.mainContainer {
+  margin-top: 110px;
+  width: calc(100% - 194px);
+  margin-left: auto;
+  margin-bottom: 50px;
+  &.notLoggedIn {
+    width: 100%;
   }
-  .btnContainer {
+  .container {
     display: flex;
-    gap: 16px;
+    align-items: center;
+    flex-direction: column;
+    p {
+      margin-bottom: 30px;
+    }
+    .btnContainer {
+      display: flex;
+      gap: 16px;
+    }
   }
 }
 

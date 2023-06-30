@@ -7,6 +7,8 @@ export interface User {
 export interface PostType {
   image: string;
   title: string;
+  description: string;
   author: User;
-  likes: [User];
+  likes: Array<User>;
+  _id: string;
 }
