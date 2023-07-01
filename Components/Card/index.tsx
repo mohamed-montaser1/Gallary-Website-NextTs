@@ -5,6 +5,7 @@ import useStorage from "@/hooks/useStorage";
 import Popup from "../Popup";
 import { PostType } from "@/types/posts";
 import { UserInDataType } from "@/hooks/useLogin";
+import { useRouter } from "next/router";
 
 interface Props {
   title: string;
@@ -13,14 +14,26 @@ interface Props {
   setUser: React.Dispatch<React.SetStateAction<UserInDataType>>;
   _id: string;
   post: PostType;
+  myPhotos: boolean;
 }
 
-const Card: FC<Props> = ({ title, description, user, _id, setUser, post }) => {
+const Card: FC<Props> = ({
+  title,
+  description,
+  user,
+  _id,
+  setUser,
+  post,
+  myPhotos,
+}) => {
   let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   let [showPopup, setShowPopup] = useState<boolean>(false);
   let [imageSrc, setImageSrc] = useState<string>("");
   let [likes_count, setLikes_count] = useState<number>(post.likes.length || 0);
   let [isLiked, setIsLiked] = useState<boolean>(false);
+
+  let router = useRouter();
+
   useEffect(() => {
     if (process.browser) {
       useStorage.getItem("isLoggedIn")?.startsWith("true")
@@ -35,24 +48,28 @@ const Card: FC<Props> = ({ title, description, user, _id, setUser, post }) => {
     setImageSrc(target.src);
   };
 
-  const handleAddLove = () => {
-    for (let i = 0; i < user.liked_posts.length; i++) {
-      if (user.liked_posts[i]._id! === post._id) {
+  const handleAddLove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(post.likes);
+    for (let i = 0; i < post.likes.length; i++) {
+      let likes = post.likes[i] as unknown;
+      likes = likes as string;
+      if (likes === user._id) {
         setIsLiked(true);
       }
     }
-
     if (isLiked) {
-      handleRemoveLove();
-      location.reload();
+      let target = e.target as HTMLButtonElement;
+      target.classList.add(styles.liked);
       return;
     }
-    handleAddLoveToPost();
-    location.reload();
+
+    handleAddLoveToPost(e);
     return;
   };
 
-  const handleAddLoveToPost = () => {
+  const handleAddLoveToPost = (e: React.MouseEvent<HTMLButtonElement>) => {
+    let target = e.target as HTMLButtonElement;
+    target.style.pointerEvents = "none";
     fetch("/api/post/like", {
       method: "put",
       headers: {
@@ -65,43 +82,54 @@ const Card: FC<Props> = ({ title, description, user, _id, setUser, post }) => {
     })
       .then((res) => res.json())
       .then((result) => {
+        if (result.error === true) {
+          alert("You Liked This Photo Already!");
+          setIsLiked(true);
+          return;
+        }
         setLikes_count((prev) => prev + 1);
+        setIsLiked(true);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
   };
-  const handleRemoveLove = () => {
-    for (let i = 0; i < user.liked_posts.length; i++) {
-      if (user.liked_posts[i]._id! === post._id) {
-        handleAddLoveToPost();
-        return;
-      }
+
+  const handleOpenPhoto = (e: React.MouseEvent<HTMLDivElement>) => {
+    let target = e.target as HTMLDivElement;
+    if (
+      target.classList.contains("Card_card__I50fD") ||
+      target.classList.contains("Card_p__L4PVm") ||
+      target.classList.contains("Card_h2__5wjGW")
+    ) {
+      router.push(`/post/${post._id}`);
+      return;
     }
-    fetch("/api/post/unlike", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token")!,
-      },
-      body: JSON.stringify({
-        postId: post._id,
-      }),
+  };
+
+  const deletePost = () => {
+    fetch(`/api/post/delete/${post._id}`, {
+      method: "DELETE",
     })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result);
-        setLikes_count((prev) => prev - 1);
+      .then((res) => {
+        if (!res.ok) {
+          alert("Error While Deleting Post!");
+          return;
+        }
+        alert("Deleted Successfully!");
+        location.reload();
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((error) => console.log(error));
+  };
+
+  const handleUpdatePost = () => {
+    router.push(`/post/update/${post._id}`);
   };
 
   return (
     <>
       {showPopup && <Popup imageSrc={imageSrc} setState={setShowPopup} />}
-      <div className={styles.card}>
+      <div className={styles.card} onClick={handleOpenPhoto}>
         <div className={styles.imageContainer}>
           <Image
             src={post.image}
@@ -122,7 +150,7 @@ const Card: FC<Props> = ({ title, description, user, _id, setUser, post }) => {
           </div>
           <div className={styles.controllers}>
             {isLoggedIn && (
-              <button className={`btn-primary`} onClick={() => handleAddLove()}>
+              <button className={`btn-primary`} onClick={handleAddLove}>
                 <Image
                   src="/heart-icon.svg"
                   alt="heart icon"
@@ -134,6 +162,16 @@ const Card: FC<Props> = ({ title, description, user, _id, setUser, post }) => {
             <p style={{ textAlign: "center" }}>{likes_count} likes</p>
           </div>
         </div>
+        {myPhotos && (
+          <div className={styles.updateDeleteControllers}>
+            <button className="btn-primary" onClick={handleUpdatePost}>
+              Update
+            </button>
+            <button className="btn-danger" onClick={deletePost}>
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

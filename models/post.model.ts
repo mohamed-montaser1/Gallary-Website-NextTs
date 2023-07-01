@@ -36,3 +36,4 @@ const PostSchema = new Schema<postSchemaType>(
 );
 
 export default models?.Post || model("Post", PostSchema);
+// export default model("Post", PostSchema);

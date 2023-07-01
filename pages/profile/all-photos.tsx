@@ -15,7 +15,6 @@ export default function allPhotos() {
   let [user, setUser] = useState<UserInDataType>({
     _id: "",
     email: "",
-    liked_posts: [],
     name: "",
     posts: [],
   });
@@ -42,7 +41,6 @@ export default function allPhotos() {
         <h1 className={styles.h1}>My Photos</h1>
         <div className={styles.cards}>
           {posts?.map((post) => {
-            console.log(`the post is`, post);
             return (
               <>
                 <Card
@@ -53,6 +51,7 @@ export default function allPhotos() {
                   setUser={setUser}
                   _id={post._id}
                   key={post._id}
+                  myPhotos={true}
                 />
               </>
             );

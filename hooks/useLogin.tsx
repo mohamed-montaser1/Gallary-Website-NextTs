@@ -2,7 +2,6 @@ import { PostType, User } from "@/types/posts";
 import useStorage from "./useStorage";
 
 export type UserInDataType = User & {
-  liked_posts: Array<User>;
   posts: Array<PostType>;
 };
 

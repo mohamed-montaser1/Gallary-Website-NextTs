@@ -57,6 +57,7 @@ export default class Post {
   }
   static async updatePost(req: Request, res: Response) {
     let id = req.query.id;
+    let { title, image, description } = req.body;
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({
         success: true,
@@ -76,10 +77,11 @@ export default class Post {
         message: "Please Fillout The Inputs",
       });
     }
-    let firstKey = Object.keys(req.body)[0] as string;
     await postModel
       .findByIdAndUpdate(id, {
-        [firstKey]: req.body[firstKey],
+        title: title,
+        description: description,
+        image: image,
       })
       .then(() => {
         return res.status(201).json({
@@ -104,7 +106,7 @@ export default class Post {
       });
     }
     try {
-      await postModel.findByIdAndDelete(id, { ...req.body }).then(() => {
+      await postModel.findByIdAndDelete(id).then(() => {
         return res.status(201).json({
           success: true,
           message: "Deleted Successfully",
@@ -173,6 +175,14 @@ export default class Post {
     }
     let token = req.headers["authorization"]!;
     let payload = await verifyPayload(token);
+    let post = await postModel.findById(postId);
+    if (post.likes.includes(payload.sub)) {
+      return res.status(405).json({
+        success: true,
+        errorMessage: "This User Already Liked",
+        error: true,
+      });
+    }
 
     try {
       await postModel

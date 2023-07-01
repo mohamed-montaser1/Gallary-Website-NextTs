@@ -21,7 +21,6 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
   let [user, setUser] = useState<UserInDataType>({
     _id: "",
     email: "",
-    liked_posts: [],
     name: "",
     posts: [],
   });
@@ -74,11 +73,11 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
         <title>Recent Uploaded Photos</title>
       </Head>
       <div
-        className={`${styles.container} ${!isLoggedIn && styles.notLoggedIn}`}
+        className={`${styles.container} ${
+          !isLoggedIn && styles.notLoggedIn
+        } container`}
       >
-        <h1 className={`text-big bold ${styles.h1}`}>
-          Most Recent Uploaded Images
-        </h1>
+        <h1 className={`text-big bold h1`}>Most Recent Uploaded Images</h1>
         <div className={styles.cards}>
           {posts?.map((post) => {
             return (
@@ -91,6 +90,7 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
                   setUser={setUser}
                   _id={post._id}
                   key={post._id}
+                  myPhotos={false}
                 />
               </>
             );

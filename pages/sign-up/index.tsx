@@ -152,7 +152,7 @@ export default function Page() {
         {success_msg}
       </h2>
       <div className={`${styles.container} container notLoggedIn`}>
-        <h1 className={styles.h1}>Sign Up</h1>
+        <h1 className={"h1"}>Sign Up</h1>
         <div className={styles.form}>
           <Input
             placeholder="Your Name..."

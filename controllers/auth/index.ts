@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
-import userModel, { postsType } from "../../models/user.model";
+import userModel, { postsType } from "@/models/user.model";
+import postModel from "@/models/post.model";
 import { compareSync, hashSync } from "bcrypt";
 import { JwtPayload, verify } from "jsonwebtoken";
 import { verifyPayload, signToken } from "@/helpers/jwtHelper";
+import { isValidObjectId } from "mongoose";
 
 class Auth {
   static async login(req: Request, res: Response) {
@@ -70,14 +72,12 @@ class Auth {
       });
     }
     let posts: postsType = [];
-    let liked_posts: postsType = [];
 
     let newUser = await userModel.create({
       name,
       email,
       password: hashSync(password, 8),
       posts,
-      liked_posts,
     });
 
     try {
@@ -113,7 +113,20 @@ class Auth {
       user = await userModel
         .findById(payload.sub)
         .select("-password -__v")
-        .populate("posts liked_posts");
+        .populate("posts");
+      // .populate([
+      //   {
+      //     path: "posts",
+      //     model: "post",
+      //     localField: "_id",
+      //     strictPopulate: false,
+      //   },
+      //   {
+      //     model: "post",
+      //     localField: "_id",
+      //     strictPopulate: false,
+      //   },
+      // ]);
     }
     return res.status(200).json({
       user,
@@ -158,6 +171,38 @@ class Auth {
       return res.status(500).json({
         success: true,
         message: "There Is Error While Updating The Model In Database!",
+      });
+    }
+  }
+  static async delete(req: Request, res: Response) {
+    let authorization = req.headers["authorization"];
+
+    // TODO: Delete Post
+    // TODO: IF we cannot find post with this id then return response with status 404
+    // TODO: IF we found the post we try to delete it
+    // TODO: IF there is an error in delete the post return response with status 500
+    // TODO: IF there is not an any error then return response with status 200
+    let payload = await verifyPayload(authorization as string);
+    let user = await userModel.findById(payload.sub);
+    if (!user) {
+      return res.status(404).json({
+        success: true,
+        message: "THE ENTERED TOKEN IS UN VALID",
+      });
+    }
+    try {
+      await userModel.findByIdAndDelete(payload.sub).then(() => {
+        return res.status(200).json({
+          success: true,
+          message: "Account Deleted Successfully!",
+        });
+      });
+    } catch (error) {
+      let e = error as { message: string };
+      return res.status(500).json({
+        success: true,
+        errorMessage: e.message,
+        errror: true,
       });
     }
   }

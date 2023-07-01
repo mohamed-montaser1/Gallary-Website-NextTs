@@ -62,7 +62,9 @@ export default function Sidebar({ isLoggedIn }: Props) {
             iconWidth={18.67}
             iconHeight={18.67}
             key={nanoid()}
-            onClick={() => {}}
+            onClick={() => {
+              router.push("/control-panel");
+            }}
           />
         </div>
       </div>

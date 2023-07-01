@@ -9,13 +9,6 @@
   @media (max-width: 560px) {
     width: calc(100% - 50px);
   }
-  .h1 {
-    text-align: center;
-    margin-bottom: 60px;
-    @media (max-width: 436px) {
-      font-size: 24px;
-    }
-  }
   .addPhoto {
     margin: 40px auto;
     cursor: pointer;

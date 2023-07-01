@@ -1,11 +1,9 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import React, { useEffect, FC, useState } from "react";
-import styles from "./CreatePost.module.scss";
+import styles from "../../profile/CreatePost.module.scss";
 import Input from "@/Components/Input";
-import useFetch from "@/hooks/useFetch";
 import useLogin, { UserInDataType } from "@/hooks/useLogin";
 import useStorage from "@/hooks/useStorage";
-import usePosts from "@/hooks/usePosts";
 import Head from "next/head";
 
 interface Props {
@@ -50,26 +48,20 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
       image: imageSrc,
       title,
       description,
-      likes: [],
-      author: {
-        name: user.name,
-        email: user.email,
-        _id: user._id,
-      },
     };
-    let createPostData = useFetch.post(
-      "post/create",
-      body,
-      useStorage.getItem("token") || ""
-    );
-    createPostData
-      .then(() => {
-        router.push("/");
+    fetch(`/api/post/update/${router.query.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
       })
-      .catch((e) => {
-        console.log("this is an error while saving the post - client");
-        console.log("error is: ", e);
-      });
+      .then((data) => console.log("data is ", data))
+      .catch((err) => console.log("error while updating - client", err));
   };
 
   useEffect(() => {
@@ -99,10 +91,10 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
   return (
     <>
       <Head>
-        <title>Create New Post</title>
+        <title>Update Post</title>
       </Head>
       <div className={`${styles.container} container`}>
-        <h1 className={"h1"}>Create New Post</h1>
+        <h1 className={"h1"}>Update Post With ID: {router.query.id}</h1>
         <input
           type="file"
           id="file"
