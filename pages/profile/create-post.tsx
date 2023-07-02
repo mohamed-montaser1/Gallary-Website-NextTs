@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import React, { useEffect, FC, useState } from "react";
 import styles from "./CreatePost.module.scss";
 import Input from "@/Components/Input";
@@ -24,11 +24,13 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
   });
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/");
-      return;
+    if (router.isReady) {
+      if (!isLoggedIn) {
+        router.replace("/");
+        return;
+      }
     }
-  }, []);
+  }, [router.isReady]);
 
   const submitAddPost = () => {
     if (imageSrc === "") {

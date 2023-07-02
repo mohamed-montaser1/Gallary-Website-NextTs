@@ -8,6 +8,9 @@
     border: 1px solid #17e381;
     border-radius: 8px;
     padding-inline: 28px 89px;
+    @media (max-width: 700px) {
+      padding-inline: 28px 10px;
+    }
     font-size: 24px;
     font-weight: normal;
     color: #6c7771;
