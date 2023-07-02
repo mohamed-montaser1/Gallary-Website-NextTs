@@ -6,5 +6,5 @@ if (!DB_URL) {
 }
 
 export default function dbConnect(): Promise<any> {
-  return connect(DB_URL!);
+  return connect(DB_URL!, { dbName: "Gallary-DB" });
 }

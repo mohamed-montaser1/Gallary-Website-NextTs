@@ -5,7 +5,6 @@ import Input from "@/Components/Input";
 import useFetch from "@/hooks/useFetch";
 import useLogin, { UserInDataType } from "@/hooks/useLogin";
 import useStorage from "@/hooks/useStorage";
-import usePosts from "@/hooks/usePosts";
 import Head from "next/head";
 
 interface Props {

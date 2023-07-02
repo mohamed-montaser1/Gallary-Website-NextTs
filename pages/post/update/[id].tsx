@@ -56,11 +56,9 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
       },
       body: JSON.stringify(body),
     })
-      .then((res) => {
-        console.log(res);
-        return res.json();
+      .then(() => {
+        router.push("/");
       })
-      .then((data) => console.log("data is ", data))
       .catch((err) => console.log("error while updating - client", err));
   };
 
@@ -79,7 +77,7 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
     let fileName = file.name;
     let regex = /(png|jpeg)$/gi;
     if (!regex.test(fileName)) {
-      alert("Please Upload Image It's Extention is webp or png or jpeg or jpg");
+      alert("Please Upload Image It's Extention is png or jpg");
       return;
     }
     let reader = new FileReader();
@@ -94,7 +92,7 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
         <title>Update Post</title>
       </Head>
       <div className={`${styles.container} container`}>
-        <h1 className={"h1"}>Update Post With ID: {router.query.id}</h1>
+        <h1 className={"h1"}>Update Post</h1>
         <input
           type="file"
           id="file"

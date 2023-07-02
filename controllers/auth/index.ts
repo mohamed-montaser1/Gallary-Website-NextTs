@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import userModel, { postsType } from "@/models/user.model";
-import postModel from "@/models/post.model";
 import { compareSync, hashSync } from "bcrypt";
 import { JwtPayload, verify } from "jsonwebtoken";
 import { verifyPayload, signToken } from "@/helpers/jwtHelper";
-import { isValidObjectId } from "mongoose";
 
 class Auth {
   static async login(req: Request, res: Response) {
@@ -114,65 +112,10 @@ class Auth {
         .findById(payload.sub)
         .select("-password -__v")
         .populate("posts");
-      // .populate([
-      //   {
-      //     path: "posts",
-      //     model: "post",
-      //     localField: "_id",
-      //     strictPopulate: false,
-      //   },
-      //   {
-      //     model: "post",
-      //     localField: "_id",
-      //     strictPopulate: false,
-      //   },
-      // ]);
     }
     return res.status(200).json({
       user,
     });
-  }
-  static async update(req: Request, res: Response) {
-    let token = req.headers["authorization"];
-    let changedValue = req.headers["changed-value"];
-    console.log(changedValue);
-    if (!token) {
-      return res.json({
-        success: true,
-        message: "Please Enter A Token",
-      });
-    }
-    let payload = await verifyPayload(token);
-    if (!payload) {
-      return res.json({
-        success: true,
-        message: "There Is Error In Provided Token!",
-      });
-    }
-    let user = await userModel.findById(payload.sub);
-    if (!user) {
-      return res.json({
-        success: true,
-        message: "Cannot Find User With The Provided Token",
-      });
-    }
-    try {
-      await userModel
-        .findByIdAndUpdate(payload.sub, {
-          [changedValue as string]: req.body[changedValue as string],
-        })
-        .then(() => {
-          return res.status(201).json({
-            success: true,
-            message: "Updated Successfly!",
-          });
-        });
-    } catch (error) {
-      return res.status(500).json({
-        success: true,
-        message: "There Is Error While Updating The Model In Database!",
-      });
-    }
   }
   static async delete(req: Request, res: Response) {
     let authorization = req.headers["authorization"];

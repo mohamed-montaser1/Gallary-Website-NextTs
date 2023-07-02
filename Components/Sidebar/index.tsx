@@ -55,17 +55,6 @@ export default function Sidebar({ isLoggedIn }: Props) {
             key={nanoid()}
             onClick={handleSignout}
           />
-          <SidebarItem
-            text="Control Panel"
-            icon={"/icons/control-icon.svg"}
-            styles={styles}
-            iconWidth={18.67}
-            iconHeight={18.67}
-            key={nanoid()}
-            onClick={() => {
-              router.push("/control-panel");
-            }}
-          />
         </div>
       </div>
     </aside>
