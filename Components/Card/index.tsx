@@ -55,7 +55,6 @@ function reducerFunction(state: state, action: action) {
 
 const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
   let unknown_likes = post.likes as unknown;
-  let likes = unknown_likes as Array<string>;
   let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   let [showPopup, setShowPopup] = useState<boolean>(false);
   let [imageSrc, setImageSrc] = useState<string>("");
