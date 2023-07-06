@@ -6,5 +6,11 @@ if (!DB_URL) {
 }
 
 export default function dbConnect(): Promise<any> {
-  return connect(DB_URL!, { dbName: "Gallary-DB" });
+  return connect(DB_URL!, { dbName: "Gallary-DB" })
+    .then(() => {
+      console.log("connected");
+    })
+    .catch((e) => {
+      console.log("error while connecting with db", e);
+    });
 }

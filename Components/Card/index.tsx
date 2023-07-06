@@ -59,7 +59,7 @@ const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
   let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   let [showPopup, setShowPopup] = useState<boolean>(false);
   let [imageSrc, setImageSrc] = useState<string>("");
-  let [likes_count, setLikes_count] = useState<number>(post.likes.length || 0);
+  //   let [likes_count, setLikes_count] = useState<number>(post.likes.length || 0);
   let [state, dispatch] = useReducer(reducerFunction, {
     b_count: 0,
     a_count: 0,
@@ -77,18 +77,23 @@ const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
   }, []);
 
   useEffect(() => {
-    if (likesCountRef.current) {
-      if (state.b_count > state.a_count) {
-        // unliked
-        likesCountRef.current.innerText = String(
-          +likesCountRef.current.innerText - 1
-        );
-        // likesCountRef.current.innerText = String(count);
-      } else {
-        // liked
-        likesCountRef.current.innerText = String(
-          +likesCountRef.current.innerText + 1
-        );
+    if (state.b_count !== 0 || state.a_count !== 0) {
+      if (likesCountRef.current) {
+        if (state.b_count > state.a_count) {
+          // unliked
+          likesCountRef.current.innerText = String(
+            +likesCountRef.current.innerText - 1
+          );
+          liked = false;
+          // likesCountRef.current.innerText = String(count);
+        } else {
+          // liked
+          likesCountRef.current.innerText = String(
+            +likesCountRef.current.innerText + 1
+          );
+
+          liked = true;
+        }
       }
     }
   }, [state.a_count]);
@@ -135,6 +140,9 @@ const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
       });
     }
     liked = !liked;
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
   };
 
   const handleOpenPhoto = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -198,19 +206,29 @@ const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
             ""
           ) : (
             <div className={styles.controllers}>
-              {isLoggedIn && (
-                <button className={`btn-primary`} onClick={handleAddLove}>
-                  <Image
-                    src="/heart-icon.svg"
-                    alt="heart icon"
-                    width={30}
-                    height={30}
-                  />
-                </button>
+              {myPhotos ? (
+                ""
+              ) : isLoggedIn ? (
+                <>
+                  <button className={`btn-primary`} onClick={handleAddLove}>
+                    <Image
+                      src="/heart-icon.svg"
+                      alt="heart icon"
+                      width={30}
+                      height={30}
+                    />
+                  </button>
+                  <p style={{ textAlign: "center" }}>
+                    <span ref={likesCountRef}>{post.likes.length}</span> likes
+                    {/* <span>{post.likes.length} likes</span> */}
+                  </p>
+                </>
+              ) : (
+                <p style={{ textAlign: "center" }}>
+                  <span ref={likesCountRef}>{post.likes.length}</span> likes
+                  {/* <span>{post.likes.length} likes</span> */}
+                </p>
               )}
-              <p style={{ textAlign: "center" }}>
-                <span ref={likesCountRef}>{likes_count}</span> likes
-              </p>
             </div>
           )}
         </div>
