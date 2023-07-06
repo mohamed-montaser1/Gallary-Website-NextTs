@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, FC, useState } from "react";
+import React, { useEffect, FC, useState, useRef } from "react";
 import styles from "./CreatePost.module.scss";
 import Input from "@/Components/Input";
 import useFetch from "@/hooks/useFetch";
@@ -13,6 +13,7 @@ interface Props {
 
 const Page: FC<Props> = ({ isLoggedIn }) => {
   let router = useRouter();
+  let imageName = useRef<HTMLParagraphElement>(null);
   let [imageSrc, setImageSrc] = useState<string>("");
   let [title, setTitle] = useState<string>("");
   let [description, setDescription] = useState<string>("");
@@ -26,7 +27,7 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
   useEffect(() => {
     if (router.isReady) {
       if (!isLoggedIn) {
-        router.replace("/");
+        router.replace("/sign-in");
         return;
       }
     }
@@ -38,7 +39,6 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
       return;
     }
     if (!title) {
-      console.log("title is", title);
       alert("Please Add Title For This Post");
       return;
     }
@@ -95,6 +95,9 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
     reader.readAsDataURL(file);
     reader.onload = (e: ProgressEvent<FileReader>) => {
       setImageSrc(reader.result! as string);
+      if (imageName.current) {
+        imageName.current.innerText = fileName;
+      }
     };
   };
   return (
@@ -113,6 +116,7 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
         <label htmlFor="file" className={`btn-primary ${styles.addPhoto}`}>
           Upload Photo
         </label>
+        <p ref={imageName} className={styles.imageName}></p>
         <div className={styles.formContainer}>
           <Input
             small="Title"

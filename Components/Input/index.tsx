@@ -1,4 +1,4 @@
-import React, { FC, FocusEvent, useRef } from "react";
+import React, { FC, FocusEvent, useRef, useMemo } from "react";
 import styles from "./Input.module.scss";
 import ValidationError from "@/lib/ValidationError";
 import { FaEye } from "react-icons/fa";

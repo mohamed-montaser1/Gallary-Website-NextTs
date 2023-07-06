@@ -6,11 +6,15 @@ import Card from "@/Components/Card";
 import { UserInDataType } from "@/hooks/useLogin";
 import Head from "next/head";
 import useStorage from "@/hooks/useStorage";
-import { nanoid } from "nanoid";
-import Popup from "@/Components/Popup";
 import Loading from "../loading";
+import { useRouter } from "next/router";
 
-export default function allPhotos() {
+interface Props {
+  isLoggedIn: boolean;
+}
+
+export default function allPhotos({ isLoggedIn }: Props) {
+  let router = useRouter();
   let [posts, setPosts] = useState<Array<PostType>>([]);
   let [user, setUser] = useState<UserInDataType>({
     _id: "",
@@ -32,6 +36,14 @@ export default function allPhotos() {
       .catch((e) => console.log(e));
   }, []);
 
+  useEffect(() => {
+    if (router.isReady) {
+      if (!isLoggedIn) {
+        router.replace("/sign-in");
+      }
+    }
+  }, [router.isReady]);
+
   return (
     <>
       <Head>
@@ -43,16 +55,7 @@ export default function allPhotos() {
           {posts?.map((post) => {
             return (
               <>
-                <Card
-                  title={post.title}
-                  description={post.description}
-                  user={user}
-                  post={post}
-                  setUser={setUser}
-                  _id={post._id}
-                  key={post._id}
-                  myPhotos={true}
-                />
+                <Card user={user} post={post} key={post._id} myPhotos={true} />
               </>
             );
           })}

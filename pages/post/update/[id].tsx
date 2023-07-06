@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
-import React, { useEffect, FC, useState } from "react";
+import React, { useEffect, FC, useState, useRef } from "react";
 import styles from "../../profile/CreatePost.module.scss";
 import Input from "@/Components/Input";
 import useLogin, { UserInDataType } from "@/hooks/useLogin";
 import useStorage from "@/hooks/useStorage";
 import Head from "next/head";
+import Card from "@/Components/Card/index";
+import { PostType } from "@/types/posts";
 
 interface Props {
   isLoggedIn: boolean;
@@ -12,9 +14,22 @@ interface Props {
 
 const Page: FC<Props> = ({ isLoggedIn }) => {
   let router = useRouter();
+  let imageName = useRef<HTMLParagraphElement>(null);
   let [imageSrc, setImageSrc] = useState<string>("");
   let [title, setTitle] = useState<string>("");
   let [description, setDescription] = useState<string>("");
+  let [oldPost, setOldPost] = useState<PostType>({
+    _id: "",
+    author: {
+      _id: "",
+      email: "",
+      name: "",
+    },
+    description: "",
+    image: "",
+    likes: [],
+    title: "",
+  });
   let [user, setUser] = useState<UserInDataType>({
     _id: "",
     email: "",
@@ -27,6 +42,15 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
       router.replace("/");
       return;
     }
+    fetch(`/api/post/${router.query.id}`, {
+      method: "GET",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setOldPost(data.post);
+      });
   }, []);
 
   const submitAddPost = () => {
@@ -35,7 +59,6 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
       return;
     }
     if (!title) {
-      console.log("title is", title);
       alert("Please Add Title For This Post");
       return;
     }
@@ -84,6 +107,9 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
     reader.readAsDataURL(file);
     reader.onload = (e: ProgressEvent<FileReader>) => {
       setImageSrc(reader.result! as string);
+      if (imageName.current) {
+        imageName.current.innerText = fileName;
+      }
     };
   };
   return (
@@ -99,9 +125,18 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
           style={{ display: "none" }}
           onChange={handleInputFileChange}
         />
+        <h4 className={`text-small ${styles.oldH4}`}>Old Photo: </h4>
+        <Card
+          post={oldPost}
+          myPhotos={false}
+          user={user}
+          style={{ margin: "20px auto" }}
+          inUpdate={true}
+        />
         <label htmlFor="file" className={`btn-primary ${styles.addPhoto}`}>
           Upload Photo
         </label>
+        <p ref={imageName} className={styles.imageName}></p>
         <div className={styles.formContainer}>
           <Input
             small="Title"

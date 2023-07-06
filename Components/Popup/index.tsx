@@ -9,7 +9,6 @@ interface Props {
 export default function Popup({ imageSrc, setState }: Props) {
   const handleClosePopup = (e: React.MouseEvent<HTMLDivElement>) => {
     let target = e.target as any;
-    console.log(target);
     if (!(target.src as string)) {
       // hanlde close
       setState(false);

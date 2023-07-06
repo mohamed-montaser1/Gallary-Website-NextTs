@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./SignIn.module.scss";
 import Input from "@/Components/Input/index";
 import Link from "next/link";
@@ -8,7 +8,6 @@ import useStorage from "@/hooks/useStorage";
 import ValidationError from "@/lib/ValidationError";
 import { loginResult } from "../sign-up";
 import Auth from "@/Services/authenticationServices";
-import useLogin from "@/hooks/useLogin";
 
 export default function Page({ isLoggedIn }: { isLoggedIn: boolean }) {
   let router = useRouter();
@@ -18,7 +17,11 @@ export default function Page({ isLoggedIn }: { isLoggedIn: boolean }) {
   let [success_msg, setSuccess_msg] = useState<string>("");
 
   if (isLoggedIn) {
-    router.push("/");
+    return router.push("/");
+  }
+
+  if ((useStorage.getItem("IsCreatedAccount") as string)?.startsWith("true")) {
+    return router.push("/verify-email");
   }
   const signInHandler = async () => {
     if (email.trim() === "" && password.trim() === "") {
@@ -52,7 +55,6 @@ export default function Page({ isLoggedIn }: { isLoggedIn: boolean }) {
     setErr_msg("");
     let authentication = new Auth(email, password);
     let login: loginResult = await authentication.login();
-    console.log(login);
     if (login.error) {
       setErr_msg(login.errorMessage);
       return;

@@ -80,17 +80,22 @@ const Page: FC<Props> = ({ isLoggedIn }) => {
         <h1 className={`text-big bold h1`}>Most Recent Uploaded Images</h1>
         <div className={styles.cards}>
           {posts?.map((post) => {
+            let unknown = post.likes as unknown;
+            let likes = unknown as Array<string>;
+            let isLiked: boolean = false;
+            for (let i = 0; i < likes.length; i++) {
+              if (likes[i] === user._id) {
+                isLiked = true;
+              }
+            }
             return (
               <>
                 <Card
-                  title={post.title}
-                  description={post.description}
                   post={post}
                   user={user}
-                  setUser={setUser}
-                  _id={post._id}
                   key={post._id}
                   myPhotos={false}
+                  liked={isLiked}
                 />
               </>
             );

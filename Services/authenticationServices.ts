@@ -1,6 +1,5 @@
-import React from "react";
-import AuthenticationError from "@/lib/AuthenticationError";
 import useFetch from "@/hooks/useFetch";
+import axios from "axios";
 
 class Auth {
   constructor(
@@ -11,7 +10,10 @@ class Auth {
   async register() {
     let route = `auth/register`;
     let body = { name: this.name, email: this.email, password: this.password };
-    let data = useFetch.post(route, body);
+    console.log("body", body);
+    // let data = await useFetch.post(route, body);
+    let { data } = await axios.post("/api/auth/register", body);
+    console.log(data);
     return data;
   }
   async login() {

@@ -111,6 +111,7 @@ export default function Page() {
     setTimeout(() => {
       setSuccess_msg("");
     }, 400);
+    console.log(email, password, name);
     let authentication = new Auth(email, password, name);
     let register: registerResult = await authentication.register();
     let login: loginResult = await authentication.login();

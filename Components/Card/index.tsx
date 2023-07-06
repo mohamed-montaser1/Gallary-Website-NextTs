@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useReducer, useRef, useState } from "react";
 import styles from "./Card.module.scss";
 import Image from "next/image";
 import useStorage from "@/hooks/useStorage";
@@ -8,30 +8,64 @@ import { UserInDataType } from "@/hooks/useLogin";
 import { useRouter } from "next/router";
 
 interface Props {
-  title: string;
-  description: string;
   user: UserInDataType;
-  setUser: React.Dispatch<React.SetStateAction<UserInDataType>>;
-  _id: string;
   post: PostType;
   myPhotos: boolean;
+  style?: any;
+  inUpdate?: boolean;
+  liked?: boolean;
 }
 
-const Card: FC<Props> = ({
-  title,
-  description,
-  user,
-  _id,
-  setUser,
-  post,
-  myPhotos,
-}) => {
+enum actions {
+  INCREASE = "INCREASE",
+  DECREASE = "DECREASE",
+}
+
+interface state {
+  b_count: number;
+  a_count: number;
+}
+
+interface payload {
+  b_count: number;
+  a_count: number;
+}
+
+interface action {
+  type: string;
+  payload: payload;
+}
+
+function reducerFunction(state: state, action: action) {
+  switch (action.type) {
+    case actions.INCREASE:
+      return {
+        ...state,
+        a_count: state.b_count + 1,
+      };
+    case actions.DECREASE:
+      return {
+        ...state,
+        a_count: state.b_count - 1,
+      };
+    default:
+      return state;
+  }
+}
+
+const Card: FC<Props> = ({ user, post, myPhotos, style, inUpdate, liked }) => {
+  let unknown_likes = post.likes as unknown;
+  let likes = unknown_likes as Array<string>;
   let [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   let [showPopup, setShowPopup] = useState<boolean>(false);
   let [imageSrc, setImageSrc] = useState<string>("");
   let [likes_count, setLikes_count] = useState<number>(post.likes.length || 0);
-  let [isLiked, setIsLiked] = useState<boolean>(false);
-
+  let [state, dispatch] = useReducer(reducerFunction, {
+    b_count: 0,
+    a_count: 0,
+  });
+  let likesCountRef = useRef<HTMLSpanElement>(null);
+  console.log(liked);
   let router = useRouter();
 
   useEffect(() => {
@@ -42,57 +76,65 @@ const Card: FC<Props> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (likesCountRef.current) {
+      if (state.b_count > state.a_count) {
+        // unliked
+        likesCountRef.current.innerText = String(
+          +likesCountRef.current.innerText - 1
+        );
+        // likesCountRef.current.innerText = String(count);
+      } else {
+        // liked
+        likesCountRef.current.innerText = String(
+          +likesCountRef.current.innerText + 1
+        );
+      }
+    }
+  }, [state.a_count]);
+
   const handleFullScreenImage = (e: React.MouseEvent<HTMLImageElement>) => {
     setShowPopup(true);
     let target = e.target as HTMLImageElement;
     setImageSrc(target.src);
   };
 
-  const handleAddLove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(post.likes);
-    for (let i = 0; i < post.likes.length; i++) {
-      let likes = post.likes[i] as unknown;
-      likes = likes as string;
-      if (likes === user._id) {
-        setIsLiked(true);
-      }
-    }
-    if (isLiked) {
-      let target = e.target as HTMLButtonElement;
-      target.classList.add(styles.liked);
-      return;
-    }
-
-    handleAddLoveToPost(e);
-    return;
-  };
-
-  const handleAddLoveToPost = (e: React.MouseEvent<HTMLButtonElement>) => {
-    let target = e.target as HTMLButtonElement;
-    target.style.pointerEvents = "none";
-    fetch("/api/post/like", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token")!,
-      },
-      body: JSON.stringify({
-        postId: post._id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.error === true) {
-          alert("You Liked This Photo Already!");
-          setIsLiked(true);
-          return;
-        }
-        setLikes_count((prev) => prev + 1);
-        setIsLiked(true);
-      })
-      .catch((err) => {
-        alert(err);
+  const handleAddLove = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (liked) {
+      //unlike
+      console.log("trying to remove like");
+      fetch("/api/post/unlike", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token") as string,
+        },
+        body: JSON.stringify({
+          postId: post._id,
+        }),
       });
+      dispatch({
+        type: actions.DECREASE,
+        payload: { b_count: state.b_count, a_count: state.b_count - 1 },
+      });
+    } else {
+      // like
+      fetch("/api/post/like", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token")!,
+        },
+        body: JSON.stringify({
+          postId: post._id,
+        }),
+      });
+      dispatch({
+        type: actions.INCREASE,
+        payload: { b_count: state.b_count, a_count: state.b_count + 1 },
+      });
+    }
+    liked = !liked;
   };
 
   const handleOpenPhoto = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -129,7 +171,11 @@ const Card: FC<Props> = ({
   return (
     <>
       {showPopup && <Popup imageSrc={imageSrc} setState={setShowPopup} />}
-      <div className={styles.card} onClick={handleOpenPhoto}>
+      <div
+        className={`${styles.card} ${inUpdate ? styles.inUpdate : ""}`}
+        style={style}
+        onClick={handleOpenPhoto}
+      >
         <div className={styles.imageContainer}>
           <Image
             src={post.image}
@@ -141,26 +187,32 @@ const Card: FC<Props> = ({
         </div>
         <div className={`${styles.body}`}>
           <div className={styles.text}>
-            <h2 className={`text-small bold ${styles.h2}`}>{title}</h2>
+            <h2 className={`text-small bold ${styles.h2}`}>{post.title}</h2>
             <p className={`text-vs normal ${styles.p}`}>
-              {description.length < 39
-                ? description.slice(0, 38)
-                : `${description.slice(0, 38)}...`}
+              {post.description.length < 39
+                ? post.description.slice(0, 38)
+                : `${post.description.slice(0, 38)}...`}
             </p>
           </div>
-          <div className={styles.controllers}>
-            {isLoggedIn && (
-              <button className={`btn-primary`} onClick={handleAddLove}>
-                <Image
-                  src="/heart-icon.svg"
-                  alt="heart icon"
-                  width={30}
-                  height={30}
-                />
-              </button>
-            )}
-            <p style={{ textAlign: "center" }}>{likes_count} likes</p>
-          </div>
+          {inUpdate ? (
+            ""
+          ) : (
+            <div className={styles.controllers}>
+              {isLoggedIn && (
+                <button className={`btn-primary`} onClick={handleAddLove}>
+                  <Image
+                    src="/heart-icon.svg"
+                    alt="heart icon"
+                    width={30}
+                    height={30}
+                  />
+                </button>
+              )}
+              <p style={{ textAlign: "center" }}>
+                <span ref={likesCountRef}>{likes_count}</span> likes
+              </p>
+            </div>
+          )}
         </div>
         {myPhotos && (
           <div className={styles.updateDeleteControllers}>
